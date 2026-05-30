@@ -85,6 +85,20 @@ async def startup_event():
 
 
 # =========================
+# HEALTH ENDPOINT
+# =========================
+@app.get("/api/v1/health")
+async def health():
+    import os
+    from src.config.config import config
+    data_stale = True
+    if os.path.exists(config.FORECAST_PATH):
+        file_age_hours = (time.time() - os.path.getmtime(config.FORECAST_PATH)) / 3600
+        data_stale = file_age_hours > 24
+    return {"status": "ok", "data_stale": data_stale}
+
+
+# =========================
 # ROOT ENDPOINT
 # =========================
 @app.get("/")
